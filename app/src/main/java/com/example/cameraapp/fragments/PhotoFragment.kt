@@ -1,11 +1,12 @@
-package com.example.cameraapp
+package com.example.cameraapp.fragments
 
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
@@ -15,15 +16,18 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
-import com.example.cameraapp.databinding.ActivityPhotoBinding
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import com.example.cameraapp.R
+import com.example.cameraapp.databinding.FragmentPhotoBinding
 import com.google.android.material.snackbar.Snackbar
 import com.google.common.util.concurrent.ListenableFuture
 import java.io.File
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class PhotoActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityPhotoBinding
+class PhotoFragment : Fragment() {
+    private lateinit var binding: FragmentPhotoBinding
     private lateinit var cameraProviderFuture: ListenableFuture<ProcessCameraProvider>
     private lateinit var cameraSelector: CameraSelector
     private var imageCapture: ImageCapture? = null
@@ -42,30 +46,15 @@ class PhotoActivity : AppCompatActivity() {
             }
         }
 
-    private fun startCamera() {
-        val preview = Preview.Builder().build().also {
-            it.setSurfaceProvider(binding.preview.surfaceProvider)
-        }
-        cameraProviderFuture.addListener({
-            val cameraProvider = cameraProviderFuture.get()
-
-            imageCapture = ImageCapture.Builder().build()
-
-            try {
-                cameraProvider.unbindAll()
-                cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture)
-            } catch (e: Exception) {
-                Log.d("TAG", "Use case binding failed")
-            }
-        }, ContextCompat.getMainExecutor(this))
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         super.onCreate(savedInstanceState)
-        binding = ActivityPhotoBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        binding = FragmentPhotoBinding.inflate(layoutInflater)
 
-        cameraProviderFuture = ProcessCameraProvider.getInstance(this)
+        cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
         cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
         imageCaptureExecutor = Executors.newSingleThreadExecutor()
@@ -86,12 +75,13 @@ class PhotoActivity : AppCompatActivity() {
             startCamera()
         }
         binding.galleryBtn.setOnClickListener {
-            startActivity(Intent(this, GalleryActivity::class.java))
+            findNavController().navigate(R.id.galleryFragment)
         }
         binding.toVideoBtn.setOnClickListener {
-            startActivity(Intent(this, VideoActivity::class.java))
+            findNavController().navigate(R.id.videoFragment)
         }
 
+        return binding.root;
     }
 
     override fun onDestroy() {
@@ -99,10 +89,28 @@ class PhotoActivity : AppCompatActivity() {
         imageCaptureExecutor.shutdown()
     }
 
+    private fun startCamera() {
+        val preview = Preview.Builder().build().also {
+            it.setSurfaceProvider(binding.preview.surfaceProvider)
+        }
+        cameraProviderFuture.addListener({
+            val cameraProvider = cameraProviderFuture.get()
+
+            imageCapture = ImageCapture.Builder().build()
+
+            try {
+                cameraProvider.unbindAll()
+                cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture)
+            } catch (e: Exception) {
+                Log.d("TAG", "Use case binding failed")
+            }
+        }, ContextCompat.getMainExecutor(requireContext()))
+    }
+
     private fun takePhoto() {
         imageCapture?.let {
             val fileName = "JPEG_${System.currentTimeMillis()}.jpg"
-            val file = File(externalMediaDirs[0], fileName)
+            val file = File(requireContext().externalMediaDirs[0], fileName)
             val outputFileOptions = ImageCapture.OutputFileOptions.Builder(file).build()
             it.takePicture(
                 outputFileOptions,

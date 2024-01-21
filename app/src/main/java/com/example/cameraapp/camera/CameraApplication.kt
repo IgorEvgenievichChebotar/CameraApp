@@ -1,4 +1,4 @@
-package com.example.cameraapp
+package com.example.cameraapp.camera
 
 import android.app.Application
 import androidx.camera.camera2.Camera2Config

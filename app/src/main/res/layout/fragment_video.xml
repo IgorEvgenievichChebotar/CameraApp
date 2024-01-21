@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PhotoActivity">
+    tools:context=".fragments.VideoFragment">
 
     <androidx.camera.view.PreviewView
         android:id="@+id/preview"
@@ -15,22 +15,23 @@
         tools:layout_editor_absoluteY="16dp" />
 
     <Button
-        android:id="@+id/img_capture_btn"
+        android:id="@+id/video_capture_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:minWidth="70dp"
         android:minHeight="75dp"
+        android:backgroundTint="@color/green"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/to_video_btn"
+        android:id="@+id/to_photo_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:text="Видеозапись"
+        android:text="Фотография"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/preview" />
 
@@ -41,7 +42,7 @@
         android:layout_margin="16dp"
         android:text="Поменять"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/img_capture_btn"
+        app:layout_constraintEnd_toStartOf="@id/video_capture_btn"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
@@ -52,7 +53,7 @@
         android:text="Галерея"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/img_capture_btn" />
+        app:layout_constraintStart_toEndOf="@id/video_capture_btn" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

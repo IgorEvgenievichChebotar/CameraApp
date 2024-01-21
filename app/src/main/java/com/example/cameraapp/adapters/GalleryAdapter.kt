@@ -1,4 +1,4 @@
-package com.example.cameraapp
+package com.example.cameraapp.adapters
 
 import android.view.LayoutInflater
 import android.view.View
